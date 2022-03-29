@@ -59,22 +59,22 @@ contract CryptoBallot {
     /// This ballot dosent expired
     error BallotActive();
 
-    modifier OwnerRights() {
+    modifier onlyOwner() {
         if (msg.sender != owner) revert NotOwner();
         _;
     }
 
-    modifier IsBallotExist(uint256 _ballotId) {
+    modifier isBallotExist(uint256 _ballotId) {
         if (ballots[_ballotId].expiration == 0) revert BallotDosentExist();
         _;
     }
 
-    modifier IsBallotFinished(uint256 _ballotId) {
+    modifier isBallotFinished(uint256 _ballotId) {
         if (ballots[_ballotId].finished) revert BallotFinished();
         _;
     }
 
-    modifier IsBallotActive(uint256 _ballotId) {
+    modifier isBallotActive(uint256 _ballotId) {
         if (block.timestamp < ballots[_ballotId].expiration)
             revert BallotActive();
         _;
@@ -88,7 +88,7 @@ contract CryptoBallot {
         uint256 _duration,
         string memory _ballotName,
         address[] memory _candidates
-    ) public OwnerRights {
+    ) public onlyOwner {
         require(_candidates.length > 0, "Candidates list are required");
         require(
             keccak256(abi.encodePacked(_ballotName)) !=
@@ -142,7 +142,7 @@ contract CryptoBallot {
     function getBallotStat(uint256 _ballotId)
         public
         view
-        IsBallotExist(_ballotId)
+        isBallotExist(_ballotId)
         returns (BallotStat memory)
     {
         Voter[] memory _voters = getVoters(
@@ -198,8 +198,8 @@ contract CryptoBallot {
     function vote(uint256 _ballotId, uint256 _candidateId)
         public
         payable
-        IsBallotExist(_ballotId)
-        IsBallotFinished(_ballotId)
+        isBallotExist(_ballotId)
+        isBallotFinished(_ballotId)
     {
         require(
             ballots[_ballotId].votersMap[msg.sender] == false,
@@ -224,9 +224,9 @@ contract CryptoBallot {
 
     function finishBallot(uint256 _ballotId)
         public
-        IsBallotExist(_ballotId)
-        IsBallotFinished(_ballotId)
-        IsBallotActive(_ballotId)
+        isBallotExist(_ballotId)
+        isBallotFinished(_ballotId)
+        isBallotActive(_ballotId)
     {
         uint256 maxVotesCnt = 0;
         uint256 winnersCount = 0;
@@ -283,8 +283,8 @@ contract CryptoBallot {
 
     function withdrawBallotPrize(uint256 _ballotId)
         public
-        IsBallotExist(_ballotId)
-        IsBallotActive(_ballotId)
+        isBallotExist(_ballotId)
+        isBallotActive(_ballotId)
     {
         require(
             ballots[_ballotId].winner != address(0),
@@ -300,7 +300,7 @@ contract CryptoBallot {
         ballots[_ballotId].prizeFund = 0;
     }
 
-    function withdrawPlatformFund() public OwnerRights {
+    function withdrawPlatformFund() public onlyOwner {
         require(platformFund > 0, "Nothing to withdraw");
 
         payable(msg.sender).transfer(platformFund);

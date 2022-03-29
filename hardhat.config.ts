@@ -1,5 +1,7 @@
 import * as dotenv from "dotenv";
 
+dotenv.config();
+
 import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
@@ -9,7 +11,6 @@ import "solidity-coverage";
 
 import './tasks';
 
-dotenv.config();
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html

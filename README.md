@@ -12,7 +12,7 @@
 
 * `new-ballot` - создает новое голосование. Параметры: `duration` - продолжительность голосования в секундах, `name` - название голосования, `candidates` - список адресов кандидатов через запятую. 
 ```
-npx hardhat add-ballot --duration 600 --name "test" --candidates "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266,0x70997970c51812dc3a010c7d01b50e0d17dc79c8"
+npx hardhat new-ballot --duration 600 --name "test" --candidates "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266,0x70997970c51812dc3a010c7d01b50e0d17dc79c8"
 ```
 
 * `ballots-list` - список всех созданных голосований.
