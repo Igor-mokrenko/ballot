@@ -1,7 +1,7 @@
 import { task, types } from 'hardhat/config';
 import '@nomiclabs/hardhat-waffle';
 
-export default task('add-ballot', 'Create new ballot')
+export default task('new-ballot', 'Create new ballot')
   .addParam(
     'duration',
     'Ballot duration in seconds',

@@ -1,46 +1,46 @@
-# Advanced Sample Hardhat Project
+# Crypto ballot project
 
-This project demonstrates an advanced Hardhat use case, integrating other tools commonly used alongside Hardhat in the ecosystem.
+Смарт конракт предназначен для создания голосования со списком кандидитов, с возможностью других пользователей выбирать победителя. Для участия в голосовании необходимо внести 0.01 ETH. Победитель голосования забирает всю сумму за вычетом комиссии.
 
-The project comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts. It also comes with a variety of other tools, preconfigured to work with the project code.
+# Функционал
+* Создавать голосование может только владелец
+* Голосование может быть завершено любым пользователем по истечении времени голосования
+* Получение информации о всех голосованиях и о конкретном голосовании
+* Победитель забирает все взносы за вычетом комиссии 10% которая остаестся в контракте и может быть выведена только владельцем
 
-Try running some of the following tasks:
+# Hardhat tasks
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-npx hardhat help
-REPORT_GAS=true npx hardhat test
-npx hardhat coverage
-npx hardhat run scripts/deploy.ts
-TS_NODE_FILES=true npx ts-node scripts/deploy.ts
-npx eslint '**/*.{js,ts}'
-npx eslint '**/*.{js,ts}' --fix
-npx prettier '**/*.{json,sol,md}' --check
-npx prettier '**/*.{json,sol,md}' --write
-npx solhint 'contracts/**/*.sol'
-npx solhint 'contracts/**/*.sol' --fix
+* `new-ballot` - создает новое голосование. Параметры: `duration` - продолжительность голосования в секундах, `name` - название голосования, `candidates` - список адресов кандидатов через запятую. 
+```
+npx hardhat add-ballot --duration 600 --name "test" --candidates "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266,0x70997970c51812dc3a010c7d01b50e0d17dc79c8"
 ```
 
-# Etherscan verification
-
-To try out Etherscan verification, you first need to deploy a contract to an Ethereum network that's supported by Etherscan, such as Ropsten.
-
-In this project, copy the .env.example file to a file named .env, and then edit it to fill in the details. Enter your Etherscan API key, your Ropsten node URL (eg from Alchemy), and the private key of the account which will send the deployment transaction. With a valid .env file in place, first deploy your contract:
-
-```shell
-hardhat run --network ropsten scripts/deploy.ts
+* `ballots-list` - список всех созданных голосований.
+```
+npx hardhat ballots-list
 ```
 
-Then, copy the deployment address and paste it in to replace `DEPLOYED_CONTRACT_ADDRESS` in this command:
-
-```shell
-npx hardhat verify --network ropsten DEPLOYED_CONTRACT_ADDRESS "Hello, Hardhat!"
+* `ballot-stat` - информация о конкретном голосовании. Параметры: `ballotid`  - id голосования
+```
+npx hardhat ballot-stat --ballotid 0
 ```
 
-# Performance optimizations
+* `vote` - отправить голос за кандидата. Параметры: `ballotid`  - id голосования, `candidateid` - id кандидата, `sender` - адрес голосующего.
+```
+npx hardhat vote --ballotid 0 --candidateid 0 --sender "0x70997970c51812dc3a010c7d01b50e0d17dc79c8"
+```
 
-For faster runs of your tests and scripts, consider skipping ts-node's type checking by setting the environment variable `TS_NODE_TRANSPILE_ONLY` to `1` in hardhat's environment. For more details see [the documentation](https://hardhat.org/guides/typescript.html#performance-optimizations).
+* `finish-ballot` - завершить голосование. Параметры: `ballotid` - id голосования
+```
+npx hardhat finish-ballot --ballotid 0
+```
+
+* `withdraw-prize` - вывести приз победителю. Параметры: `ballotid`  - id голосования, `sender` - адрес победителя
+```
+npx hardhat withdraw-prize --ballotid 0 --sender "0x70997970c51812dc3a010c7d01b50e0d17dc79c8"
+```
+
+* `withdraw-platform-fund` - вывести накопленные комиссии. 
+```
+npx hardhat withdraw-platform-fund
+```
